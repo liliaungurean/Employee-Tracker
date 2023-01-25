@@ -14,14 +14,65 @@ const db = mysql.createConnection(
     console.log(`Connected to the employeetrack_db database.`)
 );
 
+connection.connect(function (err){
+    if (err) throw err;
+    firstPrompt();
+})
 
+//run the sart function
+function firstPrompt(){
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'userChoice',
+            message; 'Waht would you like to do?',
+            choices; [
+                'View All Employees',
+                'View Employees by Department', 
+                'Add Employee',
+                'Remove Employee',
+                'Update Employee Role', 
+                'Add Role', 
+                'Add Department',
+                'Exit'
+            ]
+        }
+    
+    ]).then((res) =>{
+        console.log(res.userChoice);
+        switch(res.userChoice){
+            case 'View All Employee':
+            viewAllEmployees();   
+            break;
+            
+            case 'View Employees by Department':
+                viewEmployeesByDepartment();
+                break;
 
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-    res.status(404).end();
-});
+            case 'Add Employee':
+                AddEmployee();
+                break;
 
+            case 'Remove Employee':
+                RemoveEmployee();
+                break;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+            case 'Update Employee Role':
+                updateEmployeeRole();
+                break;
+
+            case 'Add Role':
+                addRole();
+                break;
+
+            case 'Add Department':
+                addDepartment();
+                break;
+            
+            case 'Exit':
+                connection.end();
+                break;
+        }
+
+    })
+}
