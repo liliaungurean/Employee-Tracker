@@ -94,11 +94,27 @@ function firstPrompt(){
         LEFT JOIN employee manager
             ON manager.id = employee.manager_`
     
-    connection.query (query, (err, res) => {
+     connection.query (query, (err, res) => {
         if (err) throw err;
         console.table(res);
         firstPrompt
-    });
+        });
+
+        //view employees by department
+        function viewEmployeesByDepartment(){
+            let query = 
+            `SELECT 
+                department.id, 
+                department.name, 
+                role.salary
+            FROM employee
+            LEFT JOIN role
+                ON employee.role_id = role.id
+            LEFT JOIN department
+                on department.id = role.department_id
+                GROUP BY department.id, department.name, role.salary`;
+                
+        }
     }
 
     })
