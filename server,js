@@ -153,7 +153,7 @@ function firstPrompt(){
             });
         })
     }
-    //add and employe
+    //add an employe
     function addEmploye(){
         let query = 
         `SELECT 
@@ -204,5 +204,86 @@ function firstPrompt(){
     }
 
     //Remove Employee
-    })
+    function removeEmployee(){
+        let query = 
+        `SELECT
+            emplyee.id, 
+            emplyee.first_name,
+            emplyee.last_name
+        FROM emplyee`
+
+        connection.query(query, (err, res)=>{
+            if (err)throw err;
+            const emplyee = res.map(({id, first_name, last_name}) => ({
+                value: id, 
+                name: `${id} ${first_name} ${last_name}`
+            }));
+        console.table(res);
+        getDelete(emplyee);
+        });
+    }
+
+    function getDelete(employe){
+        inquirer
+            .prompt([
+                {
+                    type: "list", 
+                    name: "employee", 
+                    message: "Emplyee To Be Deleted: ", 
+                    choices: employee
+                }
+            ]).then((res)=>{
+                let query = `DELETE FROM employee WHERE ?`;
+                connection.query(query, {id: res.employe}, (err, res) => {
+                    if (err) throw err;
+                    firstPrompt();
+                });
+            });
+    }
+    //update emplyee role
+    function updateEmployeeRole(){
+        let query = `SELECT 
+                    employee.id, 
+                    employee.first_name, 
+                    emplyee.last_name, 
+                    role.title, 
+                    department.name
+                    role.salary, 
+                    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+                FROM emplyee
+                JOIN role
+                    ON department.role_id = role.id
+                JOIN department
+                    ON department.id = role.department_id
+                JOIN employee manager
+                    ON manager.id = employee.manager_id`
+        connection.query(query, (err, res) =>{
+            if (err)throw err;
+            const employee = res.map(({id, first_name, last_name}) =>({
+                value: id, 
+                name: `${first_name} ${last_name}`
+            }));
+            console.table(res);
+            updateRole(employee);
+        });
+    }
+    function undateRole(employe){
+        let query = 
+        `SELECT
+            role.id, 
+            role,title, 
+            role.salary
+        FROM role`
+    connection.query(query, (err, res) =>{
+        if (err)throw err;
+        let roleChoices = res.map (({id, title, salary}) =>({
+            value: id, 
+            title: `${title}`, 
+            salary: `${salary}`
+        }));
+        console.table(res);
+        getUpdatedRole(emplyee, roleChoices);
+    });
+    }
+    
 }
